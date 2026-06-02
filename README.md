@@ -1,0 +1,1 @@
+# Compilador-Analisador-L-xico---Aspectos-Te-ricos-da-Computa-o-2026.1
