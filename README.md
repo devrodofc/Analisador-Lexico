@@ -117,5 +117,5 @@ java -cp "out;lib/java-cup-11b.jar" Main
 
 ## 👤 Autor
 
-Rodrigo Morais Herrmann
-Desenvolvido como projeto acadêmico para a disciplina de Aspectos Teóricos da Computação - Unifor 2026.1
+- Rodrigo Morais Herrmann
+- Desenvolvido como projeto acadêmico para a disciplina de Aspectos Teóricos da Computação - Unifor 2026.1
