@@ -1,0 +1,76 @@
+/* ----------------- Secção 1: Configuração e Imports ----------------- */
+package parser;
+
+import java_cup.runtime.*;
+import lexer.Lexer; // Importamos o nosso Scanner gerado pelo JFlex
+
+/* Código injetado na classe Parser para conectar com o Lexer */
+parser code {:
+    Lexer scanner;
+    
+    /* Construtor que recebe o Scanner como parâmetro */
+    public parser(Lexer scanner) {
+        super(scanner);
+        this.scanner = scanner;
+    }
+:}
+
+/* ----------------- Secção 2: Terminais (Vêm do JFlex) ----------------- */
+/* Palavras-chave e Símbolos (Sem valor semântico extra) */
+terminal IF, ELSE, WHILE, INT;
+terminal ATRIB, MAIS, MENOS, PONTO_VIRGULA;
+terminal APAR, FPAR, ACHAVE, FCHAVE;
+
+/* Tokens com valor semântico (Carregam dados consigo) */
+terminal Integer NUM;
+terminal String ID;
+
+/* ----------------- Secção 3: Não-Terminais (Nós da Gramática) ----------------- */
+non terminal programa, lista_comandos, comando;
+non terminal Integer expressao; // A expressão resulta num inteiro
+
+/* ----------------- Secção 4: Precedência de Operadores ----------------- */
+/* Resolvemos a ambiguidade da matemática: a leitura é da esquerda para a direita */
+precedence left MAIS, MENOS;
+
+/* ----------------- Secção 5: Produções (Regras Gramaticais) ----------------- */
+
+/* * Regra raiz: O programa é formado por uma lista de comandos.
+ * Quando o programa inteiro for lido com sucesso, printa uma mensagem.
+ */
+programa ::= lista_comandos 
+             {: System.out.println("Sucesso: Analise Sintatica e Semantica concluidas sem erros!"); :}
+           ;
+
+/* Um programa pode ter vários comandos em sequência ou apenas um */
+lista_comandos ::= lista_comandos comando
+                 | comando
+                 ;
+
+/* Definição do que é um comando válido na nossa linguagem */
+comando ::= INT ID:id ATRIB expressao:e PONTO_VIRGULA
+            {: System.out.println(">> Acao Semantica: Variavel declarada [" + id + "] com valor inicial."); :}
+            
+          | ID:id ATRIB expressao:e PONTO_VIRGULA
+            {: System.out.println(">> Acao Semantica: Variavel [" + id + "] recebeu nova atribuicao."); :}
+            
+          | IF APAR expressao FPAR ACHAVE lista_comandos FCHAVE
+            {: System.out.println(">> Acao Semantica: Bloco IF estruturado corretamente."); :}
+            
+          | WHILE APAR expressao FPAR ACHAVE lista_comandos FCHAVE
+            {: System.out.println(">> Acao Semantica: Bloco WHILE estruturado corretamente."); :}
+          ;
+
+/* Definição do que compõe uma expressão matemática */
+expressao ::= expressao:e1 MAIS expressao:e2
+              {: RESULT = (e1 != null && e2 != null) ? e1 + e2 : 0; :}
+              
+            | expressao:e1 MENOS expressao:e2
+              {: RESULT = (e1 != null && e2 != null) ? e1 - e2 : 0; :}
+              
+            | NUM:n
+              {: RESULT = n; :} /* Se for um número, propaga o valor para cima */
+              
+            | ID:id
+              {: RESULT = 1; /* Simplificação: assume 1 para IDs genéricos durante a análise */ :}
+            ;

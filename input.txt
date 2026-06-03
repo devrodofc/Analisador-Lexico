@@ -1,0 +1,11 @@
+// Arquivo de teste do nosso compilador
+int contador = 0;
+int limite = 10;
+
+while (limite - contador) {
+    contador = contador + 1;
+}
+
+if (contador) {
+    limite = 0;
+}
